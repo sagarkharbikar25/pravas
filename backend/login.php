@@ -2,22 +2,38 @@
 
 include "db.php";
 
+header("Content-Type: application/json");
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    $data = json_decode(file_get_contents("php://input"), true);
 
-    $query = "SELECT * FROM users
-              WHERE email='$email' AND password='$password'";
+    $email = $data['email'];
+    $password = $data['password'];
 
-    $result = pg_query($conn, $query);
+    $query = "SELECT id, email FROM users
+              WHERE email = $1 AND password = $2";
+
+    $result = pg_query_params($conn, $query, array($email, $password));
 
     if (pg_num_rows($result) > 0) {
-        echo "Login success";
+
+        $user = pg_fetch_assoc($result);
+
+        echo json_encode([
+            "success" => true,
+            "message" => "Login successful",
+            "user" => $user
+        ]);
+
     } else {
-        echo "Invalid login";
+
+        echo json_encode([
+            "success" => false,
+            "message" => "Invalid email or password"
+        ]);
+
     }
 
 }
-
 ?>

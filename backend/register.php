@@ -2,23 +2,39 @@
 
 include "db.php";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+header("Content-Type: application/json");
 
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+$name = $_POST['name'] ?? '';
+$email = $_POST['email'] ?? '';
+$password = $_POST['password'] ?? '';
 
-    $query = "INSERT INTO users (name, email, password)
-              VALUES ('$name', '$email', '$password')";
+if (!$name || !$email || !$password) {
 
-    $result = pg_query($conn, $query);
+    echo json_encode([
+        "success" => false,
+        "message" => "Missing fields"
+    ]);
 
-    if ($result) {
-        echo "Register success";
-    } else {
-        echo "Register failed";
-    }
-
+    exit;
 }
 
-?>
+$query = "INSERT INTO users (name, email, password)
+          VALUES ('$name', '$email', '$password')";
+
+$result = pg_query($conn, $query);
+
+if ($result) {
+
+    echo json_encode([
+        "success" => true,
+        "message" => "Register success"
+    ]);
+
+} else {
+
+    echo json_encode([
+        "success" => false,
+        "message" => "Database error"
+    ]);
+
+}
