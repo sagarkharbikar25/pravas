@@ -25,3 +25,11 @@ CREATE TABLE expenses (
     category VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE sos_logs (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER,
+    latitude VARCHAR(50),
+    longitude VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
