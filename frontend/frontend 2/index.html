@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pravaas</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="top-left">
+      <!-- small quick icons LEFT -->
+      <div class="quick-icons">
+        <button class="qbtn danger" id="qSOS" title="SOS">
+          <span class="qdot"></span> SOS
+        </button>
+
+        <button class="qbtn" id="qWeather" title="Weather">
+          <span id="wEmoji">☀️</span>
+          <span id="wText">Sunny</span>
+        </button>
+
+        <button class="qbtn" id="qSettings" title="Settings">
+          ⚙️
+        </button>
+      </div>
+    </div>
+
+    <!-- BIG CENTER LOGO -->
+    <div class="top-center">
+      <img class="logo-big" src="assets/logo.png" alt="Pravaas logo" />
+      <div class="brand-title">Pravaas</div>
+      <div class="brand-sub">All your trip info in one tap</div>
+    </div>
+
+    <div class="top-right">
+      <button class="icon-btn" id="btnBell" title="Notifications">🔔</button>
+      <button class="icon-btn" id="btnMiniProfile" title="Profile">👤</button>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- ===================== PAGES (TAB SLIDES) ===================== -->
+    <!-- HOME -->
+    <section id="page-home" class="page active">
+
+      <!-- Current Trip Card (white transparent + famous place image cutout) -->
+      <div class="trip-hero card glass">
+        <div class="trip-hero-left">
+          <div class="small">Current Trip</div>
+          <div class="trip-name">Goa</div>
+          <div class="muted">12 Mar – 16 Mar • 5 members</div>
+
+          <div class="stat-row">
+            <span class="stat s-green">💰 68% Budget</span>
+            <span class="stat s-blue">☀️ Weather OK</span>
+            <span class="stat s-orange">⚠️ Low Risk</span>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn primary" id="openGoaTrip">Open Trip</button>
+            <button class="btn ghost" id="shareTrip">Share</button>
+          </div>
+        </div>
+
+        <!-- Cutout image (will show if assets/goa.jpg exists) -->
+        <div class="trip-hero-img" aria-hidden="true"></div>
+      </div>
+
+      <!-- FEATURES (colored boxes + emoji half out) -->
+      <div class="section-title">Important Features</div>
+
+      <div class="feature-grid">
+        <button class="feature-card fc-green" data-open="expenses">
+          <div class="fc-title">Expenses</div>
+          <div class="fc-sub">Add spend + split bills</div>
+          <div class="fc-emoji">💸</div>
+        </button>
+
+        <button class="feature-card fc-purple" data-open="booking">
+          <div class="fc-title">Booking</div>
+          <div class="fc-sub">Tickets & travel modes</div>
+          <div class="fc-emoji">🎟️</div>
+        </button>
+
+        <button class="feature-card fc-orange" data-open="hotels">
+          <div class="fc-title">Hotels</div>
+          <div class="fc-sub">Booked + options</div>
+          <div class="fc-emoji">🏨</div>
+        </button>
+
+        <button class="feature-card fc-blue" data-open="location">
+          <div class="fc-title">Location</div>
+          <div class="fc-sub">Current + saved spots</div>
+          <div class="fc-emoji">🧭</div>
+        </button>
+      </div>
+
+      <div class="section-title">More</div>
+      <div class="stack">
+        <button class="row-card" data-open="itinerary">
+          <div>
+            <div class="row-title">🗓️ Itinerary</div>
+            <div class="muted">Day-wise plan demo</div>
+          </div>
+          <div class="chev">›</div>
+        </button>
+
+        <button class="row-card" data-open="conflict">
+          <div>
+            <div class="row-title">🤝 Conflict Detector</div>
+            <div class="muted">Expense imbalance indicator</div>
+          </div>
+          <div class="chev">›</div>
+        </button>
+
+        <button class="row-card" data-open="sosPage">
+          <div>
+            <div class="row-title">🚨 SOS + Live Location</div>
+            <div class="muted">Safety tools</div>
+          </div>
+          <div class="chev">›</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- TRIPS -->
+    <section id="page-trips" class="page">
+      <div class="page-head">
+        <div class="page-title">Trips</div>
+        <div class="muted">Current • Future • History</div>
+      </div>
+
+      <div class="big-trip-card" data-trip="goa" style="--bgimg:url('../assets/goa.jpg')">
+        <div class="btc-overlay"></div>
+        <div class="btc-content">
+          <div class="btc-title">Goa</div>
+          <div class="btc-sub">12 Mar – 16 Mar • Running</div>
+          <div class="btc-chip green">Current</div>
+        </div>
+      </div>
+
+      <div class="big-trip-card" data-trip="future" style="--bgimg:url('../assets/manali.jpg')">
+        <div class="btc-overlay"></div>
+        <div class="btc-content">
+          <div class="btc-title">Next Trip</div>
+          <div class="btc-sub">Planned • Dates to be set</div>
+          <div class="btc-chip blue">Future</div>
+        </div>
+      </div>
+
+      <div class="big-trip-card" data-trip="pune" style="--bgimg:url('../assets/pune.jpg')">
+        <div class="btc-overlay"></div>
+        <div class="btc-content">
+          <div class="btc-title">Pune</div>
+          <div class="btc-sub">20 Feb – 22 Feb • Completed</div>
+          <div class="btc-chip gray">History</div>
+        </div>
+      </div>
+
+      <!-- Trip details (hidden until click) -->
+      <section id="tripDetails" class="subpage hidden">
+        <div class="subhead">
+          <button class="btn back" data-back>← Back</button>
+          <div>
+            <div class="sub-title" id="tripTitle">Trip</div>
+            <div class="muted" id="tripMeta">Dates</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="two-col">
+            <div class="info-box">
+              <div class="info-label">Hotel</div>
+              <div class="info-value" id="tripHotel">—</div>
+            </div>
+            <div class="info-box">
+              <div class="info-label">Total Expense</div>
+              <div class="info-value" id="tripExpense">—</div>
+            </div>
+            <div class="info-box">
+              <div class="info-label">Members</div>
+              <div class="info-value" id="tripMembers">—</div>
+            </div>
+            <div class="info-box">
+              <div class="info-label">Bookings</div>
+              <div class="info-value" id="tripBookings">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">Demo Actions</div>
+        <div class="stack">
+          <button class="row-card" data-open="itinerary">
+            <div>
+              <div class="row-title">🗓️ Itinerary</div>
+              <div class="muted">Open demo itinerary</div>
+            </div>
+            <div class="chev">›</div>
+          </button>
+
+          <button class="row-card" data-open="expenses">
+            <div>
+              <div class="row-title">💸 Expenses</div>
+              <div class="muted">Open expense tracking</div>
+            </div>
+            <div class="chev">›</div>
+          </button>
+        </div>
+      </section>
+    </section>
+
+    <!-- CHATS -->
+    <section id="page-chats" class="page">
+      <div class="page-head">
+        <div class="page-title">Chats</div>
+        <div class="muted">Choose trip → choose person</div>
+      </div>
+
+      <!-- Step 1: choose trip -->
+      <div class="card">
+        <div class="muted">Select Trip</div>
+        <select class="select" id="chatTripSelect">
+          <option value="goa">Goa</option>
+          <option value="pune">Pune</option>
+        </select>
+      </div>
+
+      <!-- Step 2: choose person -->
+      <div class="section-title">People</div>
+      <div class="stack" id="peopleList">
+        <!-- JS fills -->
+      </div>
+
+      <!-- Step 3: chat view (hidden until person click) -->
+      <section id="chatBox" class="subpage hidden">
+        <div class="subhead">
+          <button class="btn back" data-back-chat>← Back</button>
+          <div>
+            <div class="sub-title" id="chatWith">Chat</div>
+            <div class="muted" id="chatTripName">Trip</div>
+          </div>
+        </div>
+
+        <div class="card chat">
+          <div class="chat-messages" id="chatMessages">
+            <!-- JS fills -->
+          </div>
+
+          <div class="chat-input">
+            <input id="chatInput" placeholder="Type message..." />
+            <button class="btn primary" id="sendMsg">Send</button>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="page-profile" class="page">
+      <div class="page-head">
+        <div class="page-title">Profile</div>
+        <div class="muted">User info + settings</div>
+      </div>
+
+      <div class="card">
+        <div class="profile">
+          <div class="avatar">👤</div>
+          <div>
+            <div class="p-name">Anushka</div>
+            <div class="muted">anushka@email.com</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Options</div>
+      <div class="stack">
+        <button class="row-card" data-open="profileInfo">
+          <div>
+            <div class="row-title">🪪 User Information</div>
+            <div class="muted">View personal details</div>
+          </div>
+          <div class="chev">›</div>
+        </button>
+
+        <button class="row-card" data-open="emergency">
+          <div>
+            <div class="row-title">📞 Emergency Contacts</div>
+            <div class="muted">Edit contacts</div>
+          </div>
+          <div class="chev">›</div>
+        </button>
+
+        <button class="row-card" id="openSettingsFromProfile">
+          <div>
+            <div class="row-title">🌓 Theme / Settings</div>
+            <div class="muted">Light / Dark mode</div>
+          </div>
+          <div class="chev">›</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===================== SUBPAGES (FEATURE OPEN PAGES) ===================== -->
+    <!-- EXPENSES -->
+    <section id="sub-expenses" class="subpage hidden">
+      <div class="subhead">
+        <button class="btn back" data-back>← Back</button>
+        <div>
+          <div class="sub-title">Expenses • Current Trip (Goa)</div>
+          <div class="muted">Members → Add spend → Bill split</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-mini">Members</div>
+        <div class="chips" id="memberChips"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-mini">Add Expense</div>
+
+        <div class="form-row">
+          <input id="expTitle" placeholder="Title (e.g., Dinner)" />
+          <input id="expAmount" type="number" placeholder="Amount (e.g., 1200)" />
+        </div>
+
+        <div class="form-row">
+          <select id="expPaidBy" class="select"></select>
+          <button class="btn primary" id="addExpenseBtn">Add</button>
+        </div>
+
+        <div class="muted tiny">Tip: Add 3–4 expenses for demo, split auto updates.</div>
+      </div>
+
+      <div class="card">
+        <div class="section-mini">Expenses List</div>
+        <div id="expenseList" class="list"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-mini">Bill Split Result</div>
+        <div id="splitSummary" class="list"></div>
+      </div>
+    </section>
+
+    <!-- BOOKING -->
+    <section id="sub-booking" class="subpage hidden">
+      <div class="subhead">
+        <button class="btn back" data-back>← Back</button>
+        <div>
+          <div class="sub-title">Booking</div>
+          <div class="muted">Current booked + mode details</div>
+        </div>
+      </div>
+
+      <div class="card glass">
+        <div class="section-mini">Current Booked Ticket</div>
+        <div class="ticket">
+          <div>
+            <div class="ticket-title">Goa Express</div>
+            <div class="muted">Nagpur → Goa • 12 Mar • 08:10 AM</div>
+          </div>
+          <div class="badge blue">Confirmed</div>
+        </div>
+      </div>
+
+      <div class="section-title">Choose Mode</div>
+      <div class="mode-row">
+        <button class="mode m-bus" data-mode="bus">🚌 Bus</button>
+        <button class="mode m-train" data-mode="train">🚆 Train</button>
+        <button class="mode m-plane" data-mode="plane">✈️ Plane</button>
+      </div>
+
+      <div class="card" id="modeDetails">
+        <div class="section-mini" id="modeTitle">Select a mode</div>
+        <div class="muted" id="modeBody">Tap Bus/Train/Plane to view details.</div>
+      </div>
+    </section>
+
+    <!-- HOTELS -->
+    <section id="sub-hotels" class="subpage hidden">
+      <div class="subhead">
+        <button class="btn back" data-back>← Back</button>
+        <div>
+          <div class="sub-title">Hotels</div>
+          <div class="muted">Booked + list with price</div>
+        </div>
+      </div>
+
+      <div class="card glass">
+        <div class="section-mini">Current Booked Hotel</div>
+        <div class="ticket">
+          <div>
+            <div class="ticket-title">Seaside Inn</div>
+            <div class="muted">Calangute • Check-in: 12 Mar • 2 Nights</div>
+          </div>
+          <div class="badge green">Booked</div>
+        </div>
+      </div>
+
+      <div class="section-title">Options</div>
+      <div class="stack">
+        <div class="hotel-item h-green">
+          <div>
+            <div class="row-title">Palm Stay</div>
+            <div class="muted">Free breakfast • Near beach</div>
+          </div>
+          <div class="price">₹2200</div>
+        </div>
+
+        <div class="hotel-item h-blue">
+          <div>
+            <div class="row-title">City Comfort</div>
+            <div class="muted">AC • WiFi • Center</div>
+          </div>
+          <div class="price">₹1800</div>
+        </div>
+
+        <div class="hotel-item h-purple">
+          <div>
+            <div class="row-title">Budget Nest</div>
+            <div class="muted">Clean • Low cost</div>
+          </div>
+          <div class="price">₹1200</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOCATION -->
+    <section id="sub-location" class="subpage hidden">
+      <div class="subhead">
+        <button class="btn back" data-back>← Back</button>
+        <div>
+          <div class="sub-title">Location</div>
+          <div class="muted">Current + saved spots</div>
+        </div>
+      </div>
+
+      <div class="card glass">
+        <div class="section-mini">Current Location</div>
+        <div class="loc">
+          <div class="loc-pin">📍</div>
+          <div>
+            <div class="row-title">Calangute Beach Area</div>
+            <div class="muted">Goa, India • Updated just now (demo)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Saved Spots</div>
+      <div class="stack">
+        <div class="row-card">
+          <div>
+            <div class="row-title">🌅 Sunset Point</div>
+            <div class="muted">Safe • Best time: 6 PM</div>
+          </div>
+          <div class="chev">›</div>
+        </div>
+
+        <div class="row-card">
+          <div>
+            <div class="row-title">☕ Café Lane</div>
+            <div class="muted">Crowded • Great food</div>
+          </div>
+          <div class="chev">›</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ITINERARY DEMO -->
+    <section id="sub-itinerary" class="subpage hidden">
+      <div class="subhead">
+        <button class="btn back" data-back>← Back</button>
+        <div>
+          <div class="sub-title">Itinerary (Demo)</div>
+          <div class="muted">Day-wise plan</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-mini">Day 1</div>
+        <div class="list">
+          <div class="li">10:00 AM • Beach Walk</div>
+          <div class="li">01:00 PM • Lunch (Café Lane)</div>
+          <div class="li">06:00 PM • Sunset Point</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-mini">Day 2</div>
+        <div class="list">
+          <div class="li">11:00 AM • Fort Visit</div>
+          <div class="li">03:00 PM • Local Market</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONFLICT DEMO -->
+    <section id="sub-conflict" class="subpage hidden">
+      <div class="subhead">
+        <button class="btn back" data-back>← Back</button>
+        <div>
+          <div class="sub-title">Conflict Detector (Demo)</div>
+          <div class="muted">Shows imbalance if one person pays too much</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="list">
+          <div class="li">Status: ✅ Balanced (for now)</div>
+          <div class="li muted">Add more expenses to see imbalance effect.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOS PAGE -->
+    <section id="sub-sos" class="subpage hidden">
+      <div class="subhead">
+        <button class="btn back" data-back>← Back</button>
+        <div>
+          <div class="sub-title">SOS + Live Location</div>
+          <div class="muted">Looks real for demo</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sos-box">
+          <div class="sos-left">
+            <div class="row-title">Emergency SOS</div>
+            <div class="muted">Share live location + contact alert</div>
+          </div>
+          <button class="btn sos" id="sendSOS">SEND SOS</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="row-title">Live Location</div>
+            <div class="muted">Share location with group</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="locToggle" checked />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILE SUBPAGES -->
+    <section id="sub-profileInfo" class="subpage hidden">
+      <div class="subhead">
+        <button class="btn back" data-back>← Back</button>
+        <div>
+          <div class="sub-title">User Information</div>
+          <div class="muted">Demo details</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="list">
+          <div class="li"><b>Name:</b> Anushka</div>
+          <div class="li"><b>Email:</b> anushka@email.com</div>
+          <div class="li"><b>Phone:</b> +91 XXXXX XXXXX</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sub-emergency" class="subpage hidden">
+      <div class="subhead">
+        <button class="btn back" data-back>← Back</button>
+        <div>
+          <div class="sub-title">Emergency Contacts</div>
+          <div class="muted">Demo list</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="list">
+          <div class="li">Mom • +91 XXXXX XXXXX</div>
+          <div class="li">Dad • +91 XXXXX XXXXX</div>
+          <div class="li">Friend • +91 XXXXX XXXXX</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM TAB BAR -->
+  <nav class="tabbar">
+    <button class="tabbtn active" data-page="home">🏠<span>Home</span></button>
+    <button class="tabbtn" data-page="trips">🧳<span>Trips</span></button>
+    <button class="tabbtn" data-page="chats">💬<span>Chats</span></button>
+    <button class="tabbtn" data-page="profile">👤<span>Profile</span></button>
+  </nav>
+
+  <!-- SETTINGS MODAL -->
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div class="modal-title">Settings</div>
+        <button class="icon-btn" id="closeModal" title="Close">✖</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="setting-row">
+          <div>
+            <div class="setting-title">Theme</div>
+            <div class="muted">Light / Dark mode</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="themeToggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="setting-row">
+          <div>
+            <div class="setting-title">Weather Demo</div>
+            <div class="muted">Sunny → Cloudy → Rain</div>
+          </div>
+          <button class="btn small" id="cycleWeather">Cycle</button>
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <button class="btn primary" id="saveSettings">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
