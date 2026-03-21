@@ -1,14 +1,17 @@
 <?php
 
-include "db.php";
+include "../utils/db.php";
 
 header("Content-Type: application/json");
 
+// 🔥 Read JSON input
+$data = json_decode(file_get_contents("php://input"), true);
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    $name = $data['name'];
+    $email = $data['email'];
+    $password = $data['password'];
 
     $query = "INSERT INTO users (name, email, password)
               VALUES ('$name', '$email', '$password')";
@@ -18,14 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result) {
 
         echo json_encode([
-            "success" => true,
+            "status" => "success",
             "message" => "Register success"
         ]);
 
     } else {
 
         echo json_encode([
-            "success" => false,
+            "status" => "error",
             "message" => "Register failed"
         ]);
 

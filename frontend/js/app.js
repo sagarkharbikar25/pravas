@@ -146,17 +146,77 @@ function bindHomeEvents() {
    TRIPS
 ========================= */
 
-function createTripCardHTML(trip, showMenu) {
-  return `
-    <button class="trip-card" data-trip-id="${trip.id}">
-      <div class="trip-card-left">
-        <div class="trip-card-title">${getTripEmoji(trip.name)} ${escapeHTML(trip.name)}</div>
-        <div class="trip-card-sub">${escapeHTML(formatDateRange(trip.startDate, trip.endDate))}</div>
-        <div class="trip-card-sub">People: ${trip.peopleCount || 1}</div>
-      </div>
-      ${showMenu ? `<button class="trip-card-menu" data-trip-menu="${trip.id}" type="button">⋮</button>` : ""}
-    </button>
-  `;
+async function createTripFromForm() {
+  const type = qs("#tripTypeInput").value.trim();
+  const name = qs("#tripNameInput").value.trim();
+  const startDate = qs("#tripStartDateInput").value;
+  const endDate = qs("#tripEndDateInput").value;
+  const budget = Number(qs("#tripBudgetInput").value || 0);
+  const peopleCount = Number(qs("#tripPeopleCountInput").value || 1);
+
+  if (!name) {
+    alert("Enter trip name.");
+    return;
+  }
+
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  try {
+    // 🔥 BACKEND CALL
+    const response = await fetch("http://localhost/PRAVAS/backend/api/trip/create_trip.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        user_id: user.id,
+        trip_name: name,
+        location: name,
+        start_date: startDate,
+        end_date: endDate
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.status === "success") {
+
+      // ✅ KEEP YOUR OLD SYSTEM ALSO (important)
+      const newTrip = {
+        id: createId("trip"),
+        type,
+        name,
+        startDate,
+        endDate,
+        budget,
+        peopleCount,
+        expenses: [],
+        hotel: null,
+        transport: null,
+        documents: []
+      };
+
+      appData.trips.push(newTrip);
+
+      qs("#tripNameInput").value = "";
+      qs("#tripStartDateInput").value = "";
+      qs("#tripEndDateInput").value = "";
+      qs("#tripBudgetInput").value = "";
+      qs("#tripPeopleCountInput").value = "";
+
+      saveAndRefresh();
+      openTripDetail(newTrip.id);
+
+      alert("✅ Trip created (DB + UI)");
+
+    } else {
+      alert("❌ " + data.message);
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert("Server error");
+  }
 }
 
 function bindTripCardEvents() {
@@ -391,6 +451,10 @@ function openExpensePage(tripId) {
   if (!trip) return;
 
   qs("#expensePageTripName").textContent = trip.name;
+
+  // 🔥 LOAD FROM DB
+  loadExpensesFromBackend(tripId);
+
   qs("#totalExpenseValue").textContent = `₹${getTotalExpense(trip.expenses)}`;
   qs("#expensePeopleCount").textContent = `${trip.peopleCount || 1}`;
 
@@ -436,33 +500,65 @@ function renderExpensePage(trip) {
 }
 
 function bindExpenseEvents() {
-  qs("#addExpenseBtn").addEventListener("click", () => {
-    const trip = getSelectedTrip();
-    if (!trip) return;
+  qs("#addExpenseBtn").addEventListener("click", async () => {
 
-    const title = qs("#expenseTitleInput").value.trim();
-    const amount = Number(qs("#expenseAmountInput").value);
-    const paidBy = qs("#expensePaidByInput").value.trim();
+  const trip = getSelectedTrip();
+  if (!trip) return;
 
-    if (!title || !amount || !paidBy) {
-      alert("Fill all expense fields.");
-      return;
-    }
+  const title = qs("#expenseTitleInput").value.trim();
+  const amount = Number(qs("#expenseAmountInput").value);
+  const paidBy = qs("#expensePaidByInput").value.trim();
 
-    trip.expenses.push({
-      id: createId("expense"),
-      title,
-      amount,
-      paidBy
+  if (!title || !amount || !paidBy) {
+    alert("Fill all expense fields.");
+    return;
+  }
+
+  try {
+    // 🔥 SEND TO BACKEND
+    const response = await fetch("http://localhost/PRAVAS/backend/api/trip/add_expense.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        trip_id: trip.id,
+        title: title,
+        amount: amount,
+        paid_by: paidBy
+      })
     });
 
-    qs("#expenseTitleInput").value = "";
-    qs("#expenseAmountInput").value = "";
-    qs("#expensePaidByInput").value = "";
+    const data = await response.json();
 
-    saveAndRefresh();
-    openExpensePage(trip.id);
-  });
+    if (data.status === "success") {
+
+      // ✅ KEEP YOUR EXISTING UI LOGIC
+      trip.expenses.push({
+        id: createId("expense"),
+        title,
+        amount,
+        paidBy
+      });
+
+      qs("#expenseTitleInput").value = "";
+      qs("#expenseAmountInput").value = "";
+      qs("#expensePaidByInput").value = "";
+
+      saveAndRefresh();
+      openExpensePage(trip.id);
+
+      alert("✅ Expense added");
+
+    } else {
+      alert("❌ " + data.message);
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert("Server error");
+  }
+});
 }
 
 /* =========================
@@ -878,7 +974,67 @@ function initApp() {
   bindProfileEvents();
 
   renderAll();
+
+  // 🔥 ADD THIS LINE
+  loadTripsFromBackend();
+
   showMainPage("homePage");
 }
 
 document.addEventListener("DOMContentLoaded", initApp);
+async function loadTripsFromBackend() {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  try {
+    const response = await fetch(`http://localhost/PRAVAS/backend/api/trip/get_trips.php?user_id=${user.id}`);
+    const data = await response.json();
+
+    if (data.status === "success") {
+
+      // 🔥 Replace local trips with DB trips
+      appData.trips = data.trips.map(trip => ({
+        id: trip.id,
+        name: trip.trip_name,
+        startDate: trip.start_date,
+        endDate: trip.end_date,
+        peopleCount: 1,
+        expenses: [],
+        type: "city"
+      }));
+
+      renderAll();
+
+    } else {
+      console.error("Failed to load trips");
+    }
+
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+async function loadExpensesFromBackend(tripId) {
+  try {
+    const response = await fetch(`http://localhost/PRAVAS/backend/api/trip/get_expenses.php?trip_id=${tripId}`);
+    const data = await response.json();
+
+    if (data.status === "success") {
+
+      const trip = getSelectedTrip();
+      if (!trip) return;
+
+      // 🔥 Replace local expenses with DB data
+      trip.expenses = data.expenses.map(exp => ({
+        id: exp.id,
+        title: exp.title,
+        amount: exp.amount,
+        paidBy: exp.paid_by
+      }));
+
+      renderExpensePage(trip);
+
+    }
+
+  } catch (error) {
+    console.error("Error loading expenses:", error);
+  }
+}

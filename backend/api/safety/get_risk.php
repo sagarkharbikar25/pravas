@@ -1,6 +1,6 @@
 <?php
 
-include "db.php";
+include "../utils/db.php";
 
 $user_id = $_GET['user_id'];
 $location = $_GET['location'];

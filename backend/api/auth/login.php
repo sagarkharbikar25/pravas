@@ -1,13 +1,16 @@
 <?php
 
-include "db.php";
+include "../utils/db.php";
 
 header("Content-Type: application/json");
 
+// 🔥 Read JSON input (important fix)
+$data = json_decode(file_get_contents("php://input"), true);
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    $email = $data['email'];
+    $password = $data['password'];
 
     $query = "SELECT * FROM users
               WHERE email='$email'
@@ -20,14 +23,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $user = pg_fetch_assoc($result);
 
         echo json_encode([
-            "success" => true,
-            "user_id" => $user['id']
+            "status" => "success",
+            "user" => [
+    "id" => $user['id'],
+    "name" => $user['name'],
+    "email" => $user['email']
+]
         ]);
 
     } else {
 
         echo json_encode([
-            "success" => false,
+            "status" => "error",
             "message" => "Invalid login"
         ]);
 
